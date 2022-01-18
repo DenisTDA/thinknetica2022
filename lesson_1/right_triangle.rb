@@ -15,19 +15,17 @@ triangle =[]
   triangle[x] = gets.chomp.to_f
 end  
 squares = triangle.sort.map{|x| x**2}
-if triangle[0]+triangle[1] > triangle [2] && 
-   triangle[1]+triangle[2] > triangle [0] &&
+if triangle[0] + triangle[1] > triangle [2] && 
+   triangle[1] + triangle[2] > triangle [0] &&
    triangle [0] + triangle[2] > triangle [1]
 
-    if triangle[0]== triangle[1] && triangle[1] == triangle[2]
-      puts "Triangle is equilateral"
-    elsif triangle[0] ==triangle[1]  || triangle[1] == triangle[2] || triangle[0] ==triangle[1] 
-      puts "Triangle is isosceles"
-    elsif squares[2] == squares[1] + squares[0]
-      puts "Triangle is rectangular"
-    else
-      puts "Triangle is simple" 
-    end
+   if triangle[0]== triangle[1] && triangle[1] == triangle[2] 
+    puts "Triangle is equilateral"
+   elsif triangle[0] ==triangle[1]  || triangle[1] == triangle[2] || triangle[0] ==triangle[1] 
+    puts "Triangle is isosceles" 
+   end
+   puts "Triangle is rectangular" if squares[2] == squares[1] + squares[0]
+   puts "Triangle is simple" if triangle.uniq.size == 3 &&  squares[2] != squares[1] + squares[0]
 else 
   puts "Trianle not exist"    
 end
