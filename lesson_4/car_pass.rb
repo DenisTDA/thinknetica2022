@@ -1,0 +1,3 @@
+class CarPass
+  
+end
