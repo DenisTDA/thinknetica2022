@@ -47,7 +47,7 @@ class Train
       @index_station += 1
       current_station.receive(self)
     else
-      puts "#{current_station} - конечная станция следования"
+      puts "#{current_station.name} - конечная станция следования"
     end
   end
 
@@ -57,7 +57,7 @@ class Train
       @index_station -= 1 
       current_station.receive(self)
     else
-      puts "#{current_station} - начальная станция следования"
+      puts "#{current_station.name} - начальная станция следования"
     end
   end
 
