@@ -7,8 +7,11 @@ require_relative 'car_pass.rb'
 require_relative 'station.rb'
 require_relative 'route.rb'
 require_relative 'railway.rb'
-require_relative 'interface.rb'
+
 
 rw = RailWay.new 
-menu = Interface.new(rw)
-menu.do_list
+#seed(rw)
+
+rw.do_list
+
+
