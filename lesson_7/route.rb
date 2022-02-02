@@ -36,5 +36,4 @@ class Route
   def validate!
     raise "Error! Type is not valid!" unless self.stations.all? {|station| station.is_a?(Station)}
   end
-
 end

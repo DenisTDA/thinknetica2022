@@ -17,5 +17,4 @@ def seed (rr)
 	rr.trains = [tr1, tr2, tr3, tr4]
 	rr.routes = [r1, r2, r3] 
 	rr.trains = [tr1, tr2, tr3, tr4]
-	true
 end

@@ -93,14 +93,9 @@ class Train
     false
   end
 
-  def each_carriage(&block)
-    self.carriages.each {|carriage| block.send(carriage)}
-  end
   def each_carriage
     self.carriages.each.with_index(1){|carriage, index| yield(carriage, index) }
   end
-
-
 
   protected
   attr_accessor :index_station

@@ -15,7 +15,7 @@ class RailWay
       '4' => {'1' => 'Stations list', '2' => 'Trains list', 
         '3' => 'Routes list', '4' => 'Trains on station', '5' => 'List stations with trains'},
       }
-
+ 
       @errors = {station_name: "Sation allredy exist!",
         no_stations: "Not enaugh stations for create route"}
   end
@@ -484,7 +484,6 @@ class RailWay
       car_tail = " -- free: #{carriage.seats_free} -- busy: #{carriage.seats_busy}" if carriage.class == CarPass 
       puts "#{index}. № #{carriage.number} -- #{carriage.class}#{car_tail}"
     end
-    
   end
   
   def user_choice(items)
