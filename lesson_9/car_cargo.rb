@@ -12,7 +12,7 @@ class CarCargo
     @capacity_free = capacity
     @capacity_busy = 0
     register_instance
-    @number = 'CC0' + self.class.instances.to_s
+    @number = "CC0#{self.class.instances}"
   end
 
   def take_capacity(volume)
@@ -25,7 +25,7 @@ class CarCargo
   end
 
   def release_capacity(volume)
-    raise 'Capacity free' if capacity_busy == 0
+    raise 'Capacity free' if capacity_busy.zero?
 
     self.capacity_busy <= volume ? self.capacity_free = capacity : self.capacity_free += volume
     self.capacity_busy <= volume ? self.capacity_busy = 0 : self.capacity_busy -= volume

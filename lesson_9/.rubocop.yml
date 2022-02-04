@@ -1,2 +1,22 @@
 AllCops:
   TargetRubyVersion: 2.7
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Metrics/LineLength:
+  Max: 120
+Style/Documentation:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 30
+Metrics/AbcSize:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Style/MutableConstant:
+  Enabled: false
+Metrics/ClassLength:
+  Max: 600
+Style/ClassVars:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Max: 12

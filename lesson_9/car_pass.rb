@@ -16,7 +16,7 @@ class CarPass
   end
 
   def take_seat
-    raise 'No free seats' if seats_free == 0
+    raise 'No free seats' if seats_free.zero?
 
     self.seats_free -= 1
     self.seats_busy += 1
@@ -25,7 +25,7 @@ class CarPass
   end
 
   def release_seat
-    raise 'No occupied seats' if seats_busy == 0
+    raise 'No occupied seats' if seats_busy.zero?
 
     self.seats_free += 1
     self.seats_busy -= 1
