@@ -8,21 +8,21 @@ class RailWay
     @routes = []
     @menu = { 'main' => { '1' => 'Input data', '2' => 'Change data',
                           '3' => 'Move train', '4' => 'Lists' },
-              '1' => { '1' => 'Create station', '2' => 'Create train', '3' => 'Create route' },
-              '2' => { '1' => 'Add station to route', '2' => 'Delete station from route',
-                       '3' => 'Set route to  train', '4' => 'Add and delete carriages', '5' => 'Manage train' },
-              '3' => { '1' => '' },
-              '4' => { '1' => 'Stations list', '2' => 'Trains list',
-                       '3' => 'Routes list', '4' => 'Trains on station', '5' => 'List stations with trains' } }
+              'create' => { '1' => 'Create station', '2' => 'Create train', '3' => 'Create route' },
+              'change' => { '1' => 'Add station to route', '2' => 'Delete station from route',
+                            '3' => 'Set route to  train', '4' => 'Add and delete carriages', '5' => 'Manage train' },
+              'move' => {},
+              'list' => { '1' => 'Stations list', '2' => 'Trains list',
+                          '3' => 'Routes list', '4' => 'Trains on station', '5' => 'List stations with trains' } }
 
     @errors = { station_name: 'Sation allredy exist!',
                 no_stations: 'Not enaugh stations for create route' }
   end
 
   def do_list
-    begin
+    loop do
       print_menu(menu['main'])
-      case choice = user_choice(menu['main'].keys)
+      case user_choice(menu['main'].keys)
       when '1'
         menu_create
       when '2'
@@ -32,9 +32,9 @@ class RailWay
       when '4'
         menu_list
       when '0'
-        choice = END_OPERATION
+        break
       end
-    end until choice == END_OPERATION
+    end
   end
 
   protected
@@ -50,9 +50,9 @@ class RailWay
   end
 
   def menu_create
-    begin
-      print_menu(menu['1'])
-      case choice = user_choice(menu['1'].keys)
+    loop do
+      print_menu(menu['create'])
+      case user_choice(menu['create'].keys)
       when '1'
         create_station
       when '2'
@@ -60,29 +60,29 @@ class RailWay
       when '3'
         create_route
       when '0'
-        choice = END_OPERATION
+        break
       end
-    end until choice == END_OPERATION
+    end
   end
 
   def menu_change
-    begin
-      print_menu(menu['2'])
-      case choice = user_choice(menu['2'].keys)
+    loop do
+      print_menu(menu['change'])
+      case user_choice(menu['change'].keys)
       when '1'
         add_station
       when '2'
         del_station
       when '3'
-        set_route
+        assign_route
       when '4'
         manage_car
       when '5'
         manage_train
       when '0'
-        choice = END_OPERATION
+        break
       end
-    end until choice == END_OPERATION
+    end
   end
 
   def menu_move
@@ -90,9 +90,9 @@ class RailWay
   end
 
   def menu_list
-    begin
-      print_menu(menu['4'])
-      case choice = user_choice(menu['4'].keys)
+    loop do
+      print_menu(menu['list'])
+      case user_choice(menu['list'].keys)
       when '1'
         list_stations(stations)
         pause
@@ -109,9 +109,9 @@ class RailWay
         list_stations_with_trains
         pause
       when '0'
-        choice = END_OPERATION
+        break
       end
-    end until choice == END_OPERATION
+    end
   end
 
   def create_station
@@ -150,7 +150,7 @@ class RailWay
 
     list_routes(routes)
     list_stations(stations)
-    station_start, station_end = set_stations_verified
+    station_start, station_end = choose_stations_verified
     routes << Route.new(stations[station_start], stations[station_end])
     puts "Маршрут создан: #{print_route(routes.last)}"
     pause
@@ -201,7 +201,7 @@ class RailWay
   def stations_for_del(route)
     stations = []
     route.stations.each_with_index do |station, index|
-      stations << station unless index == 0 || index == route.stations.size - 1
+      stations << station unless index.zero? || index == route.stations.size - 1
     end
     stations
   end
@@ -216,11 +216,11 @@ class RailWay
     remove_action(index_route, station)
   end
 
-  def set_route
+  def assign_route
     return if (index_route = select_route) == END_OPERATION
     return if (index_train = select_train) == END_OPERATION
 
-    set_route_action(index_route, index_train)
+    assign_route_action(index_route, index_train)
   rescue StandardError => e
     puts e
     pause
@@ -236,56 +236,57 @@ class RailWay
     end
   end
 
-  def set_route_action(index_route, index_train)
-    trains[index_train].set_route(routes[index_route])
+  def assign_route_action(index_route, index_train)
+    trains[index_train].assign_route(routes[index_route])
     puts "Route #{print_route(routes[index_route])} set to the train #{trains[index_train].number}"
     pause
   end
 
   def move_train
-    unless list_trains(trains) == END_OPERATION
-      print "Какой поезд будем двигать (1 - #{trains.size}, Выход - 0): "
-      train_index = choose_item(trains.size)
-      if trains[train_index].route.nil?
-        puts "Необходимо задать поезду #{trains[train_index].number} маршрут"
-        pause
-      else
-        movment(train_index)
-      end
+    return if list_trains(trains) == END_OPERATION
+
+    print "Какой поезд будем двигать (1 - #{trains.size}, Выход - 0): "
+    train_index = choose_item(trains.size)
+    if trains[train_index].route.nil?
+      puts "Необходимо задать поезду #{trains[train_index].number} маршрут"
+      pause
+    else
+      movment(train_index)
     end
   end
 
   def movment(train_index)
-    begin
+    loop do
       puts print_route(trains[train_index].route)
       puts "Текущая станция  -  #{trains[train_index].current_station.name}"
       print 'Двигаем: Вперед - 1, Назад - 2 , Выход - 0 : '
       choice = user_choice(%w[1 2])
       trains[train_index].move_forword if choice == '1'
       trains[train_index].move_back if choice == '2'
-      choice = END_OPERATION if choice == '0'
-    end until choice == END_OPERATION
+      break if choice == '0'
+    end
   end
 
-  def set_stations_verified
-    begin
-      station_start = set_station('начальную')
-      station_end = set_station('конечную')
+  def coose_stations_verified
+    loop do
+      station_start = choose_station('начальную')
+      station_end = choose_station('конечную')
       puts 'Начальная и конечная станция должны отличаться!' if station_start == station_end
-    end while station_start == station_end
+      break if station_start == station_end
+    end
     [station_start, station_end]
   end
 
   def manage_car
-    unless (index_train = select_train) == END_OPERATION
-      train = trains[index_train]
-      begin
-        print 'Добавить вагон - 1, Исключить вагон - 2, Выход - 0 :'
-        choice = user_choice(%w[1 2])
-        add_car_to_train(train) if choice == '1'
-        delete_car_from_train(train) if choice == '2'
-        choice = END_OPERATION if choice == '0'
-      end until choice == END_OPERATION
+    return if (index_train = select_train) == END_OPERATION
+
+    train = trains[index_train]
+    loop do
+      print 'Добавить вагон - 1, Исключить вагон - 2, Выход - 0 :'
+      choice = user_choice(%w[1 2])
+      add_car_to_train(train) if choice == '1'
+      delete_car_from_train(train) if choice == '2'
+      break if choice == '0'
     end
   end
 
@@ -299,20 +300,20 @@ class RailWay
   end
 
   def manage_train
-    unless (index_train = select_train) == END_OPERATION
-      train = trains[index_train]
-      unless (index_car = select_car(train)) == END_OPERATION
-        car = train.carriages[index_car]
-        begin
-          print 'Take up - 1, Release - 2, Exit - 0 :'
-          choice = user_choice(%w[1 2])
-          take_up_seat(car) if choice == '1' && car.instance_of?(CarPass)
-          take_up_capacity(car) if choice == '1' && car.instance_of?(CarCargo)
-          down_seat(car) if choice == '2' && car.instance_of?(CarPass)
-          down_capacity(car) if choice == '2' && car.instance_of?(CarCargo)
-          choice = END_OPERATION if choice == '0'
-        end until choice == END_OPERATION
-      end
+    return if (index_train = select_train) == END_OPERATION
+
+    train = trains[index_train]
+    return if (index_car = select_car(train)) == END_OPERATION
+
+    car = train.carriages[index_car]
+    loop do
+      print 'Take up - 1, Release - 2, Exit - 0 :'
+      choice = user_choice(%w[1 2])
+      take_up_seat(car) if choice == '1' && car.instance_of?(CarPass)
+      take_up_capacity(car) if choice == '1' && car.instance_of?(CarCargo)
+      down_seat(car) if choice == '2' && car.instance_of?(CarPass)
+      down_capacity(car) if choice == '2' && car.instance_of?(CarCargo)
+      break if choice == '0'
     end
   end
 
@@ -330,7 +331,7 @@ class RailWay
     car.take_capacity(volume)
     puts "Free - #{car.capacity_free}; Buzy - #{car.capacity_busy} "
   rescue StandardError => e
-    puts 'Error input'
+    puts "#{e} Error input"
     retry
   end
 
@@ -348,7 +349,7 @@ class RailWay
     car.release_capacity(volume)
     puts "Free - #{car.capacity_free}; Buzy - #{car.capacity_busy} "
   rescue StandardError => e
-    puts 'Error input'
+    puts "#{e} Error input"
     retry
   end
 
@@ -356,25 +357,24 @@ class RailWay
     puts print_train(train)
     if train.instance_of?(CargoTrain)
       block = ->(param) { param =~ /^(\d){3,5}(\W(\d){0,2})?$/ ? param.to_f : (raise 'Wrone value!') }
-      param = set_param_car(block)
+      param = choose_param_car(block)
       train.add_car(CarCargo.new(param))
     end
     if train.instance_of?(PassengerTrain)
-      block = ->(param) { param =~ /^\d{1,2}$/ ? param.to_i : (raise 'Wrone value!') }
-      param = set_param_car(block)
+      block = -> { param =~ /^\d{1,2}$/ ? param.to_i : (raise 'Wrone value!') }
+      param = choose_param_car(block)
       train.add_car(CarPass.new(param))
     end
     print_cars(train)
   end
 
-  def set_param_car(block)
+  def choose_param_car(block)
     print 'Input capacity: '
     param = gets.chomp
     param = block.call(param)
   rescue StandardError => e
     puts  "#{e} Try again!"
     retry
-    param
   end
 
   def delete_car_from_train(train)
@@ -387,7 +387,7 @@ class RailWay
     puts "Carriage №#{number_car} was deleted"
   end
 
-  def set_station(text = '')
+  def choose_station(text = '')
     print "Задайте станцию #{text} (1 - #{stations.size}): "
     choose_item(stations.size)
   end
@@ -453,11 +453,11 @@ class RailWay
   end
 
   def list_trains_on_station
-    unless list_stations(stations) == END_OPERATION
-      print "Make a choice (1 - #{stations.size}): "
-      index_station = choose_item(stations.size)
-      show_station(index_station) unless index_station == END_OPERATION
-    end
+    return if list_stations(stations) == END_OPERATION
+
+    print "Make a choice (1 - #{stations.size}): "
+    index_station = choose_item(stations.size)
+    show_station(index_station) unless index_station == END_OPERATION
   end
 
   def show_station(index_station)

@@ -1,6 +1,3 @@
-# require_relative 'manufacture.rb'
-# require_relative 'instancecounter.rb'
-
 class Train
   include Manufacture
   include InstanceCounter
@@ -37,18 +34,18 @@ class Train
   end
 
   def add_car(carriage)
-    self.speed == 0 && type_validation?(carriage) ? carriages << carriage : (puts 'Состав движется')
+    self.speed.zero? && type_validation?(carriage) ? carriages << carriage : (puts 'Состав движется')
   end
 
   def delete_car(carriage)
-    if self.speed == 0
-      carriages.size > 0 ? carriages.delete(carriage) : (puts 'Состав уже расформирован')
+    if self.speed.zero?
+      carriages.size.positive? ? carriages.delete(carriage) : (puts 'Состав уже расформирован')
     else
       puts 'Состав движеться'
     end
   end
 
-  def set_route(route)
+  def assign_route(route)
     self.route = route
     self.index_station = 0
     self.route.stations[0].receive(self)
