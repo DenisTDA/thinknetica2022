@@ -63,7 +63,7 @@ class RailWay
   attr_reader :command_do
 
   def print_menu(menu)
-    #    system('clear')
+    system('clear')
     menu.each { |key, item| puts "#{key} - #{item}" }
     print "Выбирайте пункт меню (1 - #{menu.size}), Выход - 0 : "
   end

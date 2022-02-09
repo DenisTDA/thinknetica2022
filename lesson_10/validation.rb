@@ -31,16 +31,16 @@ module Validation
       end
     end
 
-    def presence(name_atr, _extention)
-      raise "PresenceError #{name_atr}" if name_atr.nil? || name_atr.empty?
+    def presence(var, _extention)
+      raise "PresenceError #{var}" if var.nil? || var.empty?
     end
 
-    def format(name_atr, extention)
-      raise "FormatError #{name_atr}..." unless name_atr.to_s =~ extention
+    def format(var, extention)
+      raise "FormatError #{var}..." unless var.to_s =~ extention
     end
 
-    def type(name_atr, extention)
-      raise "TypeError #{name_atr}..." unless name_atr.is_a?(extention)
+    def type(var, extention)
+      raise "TypeError #{var}..." unless var.is_a?(extention)
     end
   end
 end
